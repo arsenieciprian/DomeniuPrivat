@@ -3,29 +3,63 @@
 <head>
   <meta charset="UTF-8">
   <title>Domeniu Privat</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    /* CSS General */
     html, body {
       margin: 0;
       padding: 0;
       overflow: hidden;
       background: black;
-      color: #00ff00;
-      font-family: monospace;
+      /* Am schimbat font-family pentru a folosi Rajdhani, păstrând și un fallback monospace */
+      font-family: 'Rajdhani', monospace;
+      color: #00ff00; /* Verde intens */
     }
     #matrixCanvas {
       display: block;
+      /* Am făcut canvasul să acopere tot ecranul */
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 0; /* Asigură-te că este în spate */
     }
+
+    /* Stil pentru mesaj */
     .message {
       position: absolute;
-      top: 40%;
-      width: 100%;
+      top: 50%; /* Centrare verticală */
+      left: 50%; /* Centrare orizontală */
+      transform: translate(-50%, -50%); /* Ajustare pentru centrare perfectă */
+      width: 90%;
+      max-width: 600px; /* Limită de lățime pentru lizibilitate */
+      padding: 20px;
       text-align: center;
       color: #00ff00;
-      font-size: 1.5rem;
-      text-shadow: 0 0 10px #00ff00;
+      /* Am adăugat un box-shadow subtil pentru un efect de 'ecran' */
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.7);
+      background-color: rgba(0, 0, 0, 0.5); /* Background ușor transparent */
+      border: 1px solid #00ff00;
+      z-index: 1; /* Asigură-te că este deasupra canvas-ului */
     }
+
+    /* Stil pentru Titlu */
     h1 {
-      font-size: 2rem;
+      font-size: 3rem; /* Font mai mare pentru impact */
+      font-weight: 700; /* Bold */
+      letter-spacing: 5px; /* Spațiere mai mare între litere */
+      text-shadow: 0 0 15px #00ff00; /* Text-shadow mai pronunțat */
+      margin-bottom: 0.5rem;
+      /* Am adăugat un underline discret */
+      border-bottom: 2px solid #00ff00;
+      padding-bottom: 10px;
+    }
+
+    /* Stil pentru Paragrafe */
+    .message p {
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+      margin: 10px 0;
+      line-height: 1.5;
     }
   </style>
 </head>
@@ -41,32 +75,42 @@
     // === MATRIX BACKGROUND ===
     const canvas = document.getElementById('matrixCanvas');
     const ctx = canvas.getContext('2d');
-    canvas.height = window.innerHeight;
-    canvas.width = window.innerWidth;
+    
+    // Funcție pentru a seta dimensiunile canvas-ului
+    const setCanvasSize = () => {
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
+    };
+    setCanvasSize();
 
     const letters = '01ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    const fontSize = 14;
+    const fontSize = 16; // Am mărit puțin dimensiunea fontului
     const columns = canvas.width / fontSize;
     const drops = Array(Math.floor(columns)).fill(1);
 
     function draw() {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      // Strat semi-transparent pentru efectul de 'coadă'
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.04)'; 
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#0F0';
-      ctx.font = fontSize + 'px monospace';
-
+      
+      ctx.fillStyle = '#0F0'; // Verde intens
+      ctx.font = fontSize + 'px monospace'; // Păstrăm 'monospace' pentru efectul Matrix
+      
       for (let i = 0; i < drops.length; i++) {
         const text = letters.charAt(Math.floor(Math.random() * letters.length));
         ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        
+        // Resetarea coloanei: 2% șanse să se reseteze după ce iese din ecran
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.98) drops[i] = 0; 
+        
         drops[i]++;
       }
     }
-    setInterval(draw, 33);
-    window.addEventListener('resize', () => {
-      canvas.height = window.innerHeight;
-      canvas.width = window.innerWidth;
-    });
+    
+    // Rulare mai rapidă pentru fluiditate
+    setInterval(draw, 30); 
+    
+    window.addEventListener('resize', setCanvasSize);
 
     // === LANGUAGE DETECTION ===
     const userLang = navigator.language || navigator.userLanguage;
@@ -77,11 +121,11 @@
     const line2 = document.getElementById("line2");
 
     if (isRomanian) {
-      title.textContent = "Domeniu Privat";
+      title.textContent = "DOMENIU PRIVAT";
       line1.textContent = "Acest domeniu nu găzduiește niciun conținut public.";
       line2.textContent = "Este folosit exclusiv pentru servicii private și email.";
     } else {
-      title.textContent = "Private Domain";
+      title.textContent = "PRIVATE DOMAIN";
       line1.textContent = "This domain does not host any public content.";
       line2.textContent = "It is used exclusively for private services and email.";
     }
