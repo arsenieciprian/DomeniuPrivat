@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <title>Domeniu Privat</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: black;
+      color: #00ff00;
+      font-family: monospace;
+    }
+    #matrixCanvas {
+      display: block;
+    }
+    .message {
+      position: absolute;
+      top: 40%;
+      width: 100%;
+      text-align: center;
+      color: #00ff00;
+      font-size: 1.5rem;
+      text-shadow: 0 0 10px #00ff00;
+    }
+    h1 {
+      font-size: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="matrixCanvas"></canvas>
+  <div class="message">
+    <h1 id="title"></h1>
+    <p id="line1"></p>
+    <p id="line2"></p>
+  </div>
+
+  <script>
+    // === MATRIX BACKGROUND ===
+    const canvas = document.getElementById('matrixCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+
+    const letters = '01ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+
+    function draw() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#0F0';
+      ctx.font = fontSize + 'px monospace';
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters.charAt(Math.floor(Math.random() * letters.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+    setInterval(draw, 33);
+    window.addEventListener('resize', () => {
+      canvas.height = window.innerHeight;
+      canvas.width = window.innerWidth;
+    });
+
+    // === LANGUAGE DETECTION ===
+    const userLang = navigator.language || navigator.userLanguage;
+    const isRomanian = userLang.startsWith("ro");
+
+    const title = document.getElementById("title");
+    const line1 = document.getElementById("line1");
+    const line2 = document.getElementById("line2");
+
+    if (isRomanian) {
+      title.textContent = "Domeniu Privat";
+      line1.textContent = "Acest domeniu nu găzduiește niciun conținut public.";
+      line2.textContent = "Este folosit exclusiv pentru servicii private și email.";
+    } else {
+      title.textContent = "Private Domain";
+      line1.textContent = "This domain does not host any public content.";
+      line2.textContent = "It is used exclusively for private services and email.";
+    }
+  </script>
+</body>
+</html>
